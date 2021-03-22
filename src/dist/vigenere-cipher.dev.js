@@ -17,12 +17,59 @@ function () {
 
   _createClass(VigenereCipheringMachine, [{
     key: "encrypt",
-    value: function encrypt() {}
+    value: function encrypt(input, key) {
+      var output = "";
+
+      for (var i = 0, j = 0; i < input.length; i++) {
+        var c = input.charCodeAt(i);
+
+        if (isUppercase(c)) {
+          output += String.fromCharCode((c - 65 + key[j % key.length]) % 26 + 65);
+          j++;
+        } else if (isLowercase(c)) {
+          output += String.fromCharCode((c - 97 + key[j % key.length]) % 26 + 97);
+          j++;
+        } else {
+          output += input.charAt(i);
+        }
+      }
+
+      return output;
+    }
   }, {
     key: "decrypt",
-    value: function decrypt() {
-      throw new CustomError('Not implemented'); // remove line with error and write your code here
-    }
+    value: function (_decrypt) {
+      function decrypt(_x, _x2) {
+        return _decrypt.apply(this, arguments);
+      }
+
+      decrypt.toString = function () {
+        return _decrypt.toString();
+      };
+
+      return decrypt;
+    }(function (text, key) {
+      var keyStr = key;
+
+      if (keyStr.length == 0) {
+        return;
+      }
+
+      var keyArray = filterKey(keyStr);
+
+      if (keyArray.length == 0) {
+        return;
+      }
+
+      if (decrypt()) {
+        for (var i = 0; i < keyArray.length; i++) {
+          keyArray[i] = (26 - keyArray[i]) % 26;
+        }
+      }
+
+      var textElem = text;
+      textElem.value = crypt(textElem.value, keyArray);
+    })
   }]);
 
   return VigenereCipheringMachine;
