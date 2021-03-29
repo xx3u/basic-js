@@ -1,7 +1,7 @@
 const CustomError = require("../extensions/custom-error");
 
 class VigenereCipheringMachine {
-  _tabulaRecta = {
+  alphabet = {
       a: "abcdefghijklmnopqrstuvwxyz",
       b: "bcdefghijklmnopqrstuvwxyza",
       c: "cdefghijklmnopqrstuvwxyzab",
@@ -29,51 +29,58 @@ class VigenereCipheringMachine {
       y: "yzabcdefghijklmnopqrstuvwx",
       z: "zabcdefghijklmnopqrstuvwxy"
     }
-  encrypt(plainText, keyword) {
-    if( typeof(plainText) !== "string" ){
-      return "invalid plainText. Must be string, not " + typeof(plainText);
-    }
-    if( typeof(keyword) !== "string" ){
-      return "invalid keyword. Must be string, not " + typeof(keyword);
+  encrypt(text, password) {
+    if (text === undefined || password === undefined) {
+      throw new Error();
     }
 
-    plainText = plainText.toLowerCase();
-    keyword = keyword.match(/[a-z]/gi).join("").toLowerCase();
-    var encryptedText = "";
-    var specialCharacterCount = 0;
+    if (typeof(text) !== "string"){
+      return;
+    }
+    if (typeof(password) !== "string" ){
+      return ;
+    }
 
-    for( var i = 0; i < plainText.length; i++ ){
-      var keyLetter = (i - specialCharacterCount) % keyword.length;
-      var keywordIndex = this._tabulaRecta.a.indexOf(keyword[keyLetter]);
+    text = text.toLowerCase();
+    password = password.match(/[a-z]/gi).join("").toLowerCase();
+    let encryptedText = "";
+    let specialCharacterCount = 0;
 
-      if( this._tabulaRecta[plainText[i]] ){
-        encryptedText += this._tabulaRecta[plainText[i]][keywordIndex];
+    for( let i = 0; i < text.length; i++ ){
+      let keyLetter = (i - specialCharacterCount) % password.length;
+      let passwordIndex = this.alphabet.a.indexOf(password[keyLetter]);
+
+      if( this.alphabet[text[i]] ){
+        encryptedText += this.alphabet[text[i]][passwordIndex];
       } else{
-        encryptedText += plainText[i];
+        encryptedText += text[i];
         specialCharacterCount++;
       }
     }
     return encryptedText.toUpperCase();
   }    
-  decrypt(encryptedText, keyword) {
-    if( typeof(encryptedText) !== "string" ){
-      return "invalid encryptedText. Must be string, not " + typeof(encryptedText);
+  decrypt(encryptedText, password) {
+    if (encryptedText === undefined || password === undefined) {
+      throw new Error();
     }
-    if( typeof(keyword) !== "string" ){
-      return "invalid keyword. Must be string, not " + typeof(keyword);
+    if( typeof(encryptedText) !== "string" ){
+      return ;
+    }
+    if( typeof(password) !== "string" ){
+      return ;
     }
 
     encryptedText = encryptedText.toLowerCase();
-    keyword = keyword.match(/[a-z]/gi).join("").toLowerCase();
-    var decryptedText = "";
-    var specialCharacterCount = 0;
+    password = password.match(/[a-z]/gi).join("").toLowerCase();
+    let decryptedText = "";
+    let specialCharacterCount = 0;
 
-    for( var i = 0; i < encryptedText.length; i++ ){
-      var keyLetter = (i - specialCharacterCount) % keyword.length;
-      var keyRow = this._tabulaRecta[keyword[keyLetter]];
+    for( let i = 0; i < encryptedText.length; i++ ){
+      let keyLetter = (i - specialCharacterCount) % password.length;
+      let keyRow = this.alphabet[password[keyLetter]];
 
       if( keyRow.indexOf(encryptedText[i]) !== -1 ){
-        decryptedText += this._tabulaRecta.a[keyRow.indexOf(encryptedText[i])];
+        decryptedText += this.alphabet.a[keyRow.indexOf(encryptedText[i])];
       }else{
         decryptedText += encryptedText[i];
         specialCharacterCount++;
